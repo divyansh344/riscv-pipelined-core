@@ -47,6 +47,7 @@ The processor executes the following assembly code to generate the sequence `0, 
 002000b3  // ADD  x1, x0, x2   -> Shift: a = b
 00300133  // ADD  x2, x0, x3   -> Shift: b = c
 fe0008e3  // BEQ  x0, x0, -16  -> Jump back 4 instructions (Infinite Loop)
+```
 
 ### 🛠️ How to Run
 
