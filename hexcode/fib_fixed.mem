@@ -1,0 +1,7 @@
+00000093  // ADDI x1, x0, 0    -> Init 'a' = 0
+00100113  // ADDI x2, x0, 1    -> Init 'b' = 1
+002081b3  // ADD  x3, x1, x2   -> Loop Start: c = a + b
+00302023  // SW   x3, 0(x0)    -> Store 'c' to Mem[0] (Update LEDs)
+002000b3  // ADD  x1, x0, x2   -> Shift: a = b
+00300133  // ADD  x2, x0, x3   -> Shift: b = c
+fe0008e3  // BEQ  x0, x0, -16  -> Jump back 4 instructions (to address 0x08)
