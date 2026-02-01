@@ -47,3 +47,24 @@ The processor executes the following assembly code to generate the sequence `0, 
 002000b3  // ADD  x1, x0, x2   -> Shift: a = b
 00300133  // ADD  x2, x0, x3   -> Shift: b = c
 fe0008e3  // BEQ  x0, x0, -16  -> Jump back 4 instructions (Infinite Loop)
+
+## 🛠️ How to Run
+
+### **1. Simulation (Vivado)**
+To verify the logic before deployment:
+1.  Open **Vivado** and create a new project.
+2.  Add all Verilog files from the `design_sources/` folder.
+3.  Add the testbench file (`tb_top.v`) from the `simulation_source/` folder.
+4.  **Important:** Copy the `hexcode/fib_fixed.mem` file into your project's simulation directory (or ensure the path in `instruction_memory.v` is correct).
+5.  Run **Behavioral Simulation**.
+6.  Observe `cpu_data_out` to see the Fibonacci sequence generated.
+
+### **2. FPGA Implementation (ZedBoard)**
+To run the processor on hardware:
+1.  Create a project targeting the **Zynq-7000 (xc7z020clg484-1)**.
+2.  Add `fpga_wrapper.v` as the **Top Module**.
+3.  Add the constraints file from `constraint_file/`.
+4.  Run **Synthesis** and **Implementation**.
+5.  Click **Generate Bitstream**.
+6.  Open **Hardware Manager** -> **Auto Connect** -> **Program Device**.
+7.  Press the **Reset Button** on the board and watch the LEDs count!
