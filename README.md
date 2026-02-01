@@ -69,3 +69,14 @@ To run the processor on hardware:
 5.  Click **Generate Bitstream**.
 6.  Open **Hardware Manager** -> **Auto Connect** -> **Program Device**.
 7.  Press the **Reset Button** on the board and watch the LEDs count!
+
+## 🔮 Future Roadmap
+- [ ] Add support for **RV32M Extension** (Hardware Multiplication/Division).
+- [ ] Interface with external **DDR Memory** controller.
+
+## 👤 Author
+**Divyansh**
+- **GitHub:** [@divyansh344](https://github.com/divyansh344)
+
+## 📜 License
+This project is open-source and available under the **MIT License**.
