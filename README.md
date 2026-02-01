@@ -1,2 +1,49 @@
-# riscv-pipelined-core
-5-stage pipelined RISC-V (RV32I) core in Verilog implementing data forwarding, stalling, and flushing, validated on the Zynq-7000 ZedBoard.
+# 5-Stage Pipelined RISC-V Core (RV32I)
+
+**5-stage pipelined RISC-V (RV32I) core in Verilog implementing data forwarding, stalling, and flushing, validated on the Zynq-7000 ZedBoard.**
+
+## 📌 Introduction
+This repository contains the RTL implementation of a 32-bit RISC-V processor designed from scratch. The core implements the standard **RV32I Instruction Set** and features a classic 5-stage pipeline (Fetch, Decode, Execute, Memory, Writeback). 
+
+Key architectural features include a **Hazard Detection Unit** for stalling and a **Forwarding Unit** to solve data hazards without unnecessary bubbles, ensuring high throughput. The design has been synthesized and validated on the **Digilent ZedBoard (Zynq-7000)**.
+
+## 🚀 Key Features
+- **ISA:** RISC-V 32-bit Integer (RV32I)
+- **Pipeline:** 5-Stage (IF, ID, EX, MEM, WB)
+- **Hazard Handling:** - **Data Hazards:** Solved via Forwarding (EX-to-EX, MEM-to-EX).
+  - **Load-Use Hazards:** Solved via Stalling (Bubble insertion).
+  - **Control Hazards:** Solved via Flushing (Branch misprediction handling).
+- **Platform:** Zynq-7000 (ZedBoard).
+- **Verification:** Validated via infinite loop Fibonacci sequence generation.
+
+## 📂 Repository Structure
+| Folder | Description |
+| :--- | :--- |
+| `design_sources/` | Verilog source code for the processor core and pipeline stages. |
+| `simulation_source/` | Testbench files (`tb_top.v`) for verifying logic in Vivado/ModelSim. |
+| `constraint_file/` | Xilinx XDC constraints for ZedBoard pin mapping (LEDs, Clock). |
+| `hexcode/` | Machine code (`.mem`) files for loading into Instruction Memory. |
+| `simulation_image/` | Waveform screenshots proving functional correctness. |
+| `block_diagram/` | High-level architecture diagrams of the datapath. |
+
+## 📊 Architecture
+The processor uses a Harvard Architecture with separate Instruction and Data memories.
+*(Note: View the `block_diagram` folder for the detailed datapath visual).*
+
+## 🧪 Simulation & Testing
+The core was verified by running an **Infinite Fibonacci Sequence** program.
+
+### **Waveform Output**
+![Simulation Waveform](simulation_image/riscv-pipelined-core/simulation_image/Screenshot 2026-01-29 052156.png)
+
+### **Test Program (Fibonacci)**
+The processor executes the following assembly code to generate the sequence `0, 1, 1, 2, 3, 5, 8...` on the LEDs:
+
+```assembly
+00000093  // ADDI x1, x0, 0    -> Init 'a' = 0
+00100113  // ADDI x2, x0, 1    -> Init 'b' = 1
+002081b3  // ADD  x3, x1, x2   -> Loop Start: c = a + b
+00302023  // SW   x3, 0(x0)    -> Store 'c' to Mem[0] (Update LEDs)
+002000b3  // ADD  x1, x0, x2   -> Shift: a = b
+00300133  // ADD  x2, x0, x3   -> Shift: b = c
+fe0008e3  // BEQ  x0, x0, -16  -> Jump back 4 instructions (Infinite Loop)
