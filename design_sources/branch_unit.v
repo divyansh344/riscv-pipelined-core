@@ -23,8 +23,8 @@
 module branch_unit(
     input  wire       branch,       // From Control Unit (Is this a Branch instruction?)
     input  wire [2:0] funct3,       // From Instruction [14:12] (BEQ vs BNE vs BLT)
-    input  wire       zero_flag,    // From ALU (True if A - B == 0)
-    input  wire       sign_flag,    // From ALU (True if Result is Negative)
+    input  wire [31:0] src_a,       // Register source A
+    input  wire [31:0] src_b,       // Register source B
     
     output reg        branch_taken  // Output to Fetch Unit (1 = Take Branch)
     );
@@ -34,17 +34,17 @@ module branch_unit(
 
         if (branch) begin
             case(funct3)
-                // BEQ (Branch if Equal) -> ALU zero_flag is High
-                3'b000: branch_taken = zero_flag; 
-                
-                // BNE (Branch if Not Equal) -> ALU zero_flag is Low
-                3'b001: branch_taken = ~zero_flag;
-                
-                // BLT (Branch Less Than) -> Result is Negative (sign_flag is High)
-                3'b100: branch_taken = sign_flag;
-                
-                // BGE (Branch Greater/Equal) -> Result is Positive (sign_flag is Low)
-                3'b101: branch_taken = ~sign_flag;
+                // BEQ (Branch if Equal)
+                3'b000: branch_taken = (src_a == src_b);
+
+                // BNE (Branch if Not Equal)
+                3'b001: branch_taken = (src_a != src_b);
+
+                // BLT (Branch Less Than)
+                3'b100: branch_taken = ($signed(src_a) < $signed(src_b));
+
+                // BGE (Branch Greater/Equal)
+                3'b101: branch_taken = ($signed(src_a) >= $signed(src_b));
 
                 // BLTU/BGEU (Unsigned) would need a Carry Flag, 
                 // but for this version, we default to 0.
