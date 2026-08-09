@@ -59,21 +59,21 @@ module data_path(
     wire [31:0] reg_rdata2;
     wire [31:0] alu_result;
     wire [31:0] src_AE, src_BE;
+    wire        branch_taken;
     wire pc_srcE;
     wire [31:0] pc_targetE;
     reg  [31:0] write_back_data;// Data to be written to Register File
 
     
-    // Branch Unit Signals
+    // ALU Flags
     wire        zero_flag;
     wire        sign_flag;
-    wire        branch_taken;
        
     // Pipeline Wires
     // 1. Fetch->Decode
     wire [31:0] instrD, pc_plus_4D, pcD;
     // 2. Decode->Execute
-    wire reg_writeE, mem_writeE, jumpE, jalrE, branchE, alu_srcE;
+    wire reg_writeE, mem_writeE, jumpE, jalrE, branchE, alu_srcE, branch_takenE;
     wire [1:0] result_srcE;
     wire [5:0] alu_controlE;
     wire [31:0] rd1E, rd2E, pcE, imm_extE, pc_plus_4E;
@@ -149,10 +149,10 @@ module data_path(
 
     // 6. BRANCH UNIT
     branch_unit br_unit (
-        .branch(branchE),
-        .funct3(funct3E),
-        .zero_flag(zero_flag),
-        .sign_flag(sign_flag),
+        .branch(branch),
+        .funct3(instrD[14:12]),
+        .src_a(reg_rdata1),
+        .src_b(reg_rdata2),
         .branch_taken(branch_taken)
     );
 
@@ -209,6 +209,7 @@ module data_path(
     .rs1D(instrD[19:15]),
     .rs2D(instrD[24:20]),
     .funct3D(instrD[14:12]),
+    .branch_takenD(branch_taken),
     
     .alu_controlE(alu_controlE),
     .mem_writeE(mem_writeE),       
@@ -226,7 +227,8 @@ module data_path(
     .rd2E(rd2E),
     .rs1E(rs1E),
     .rs2E(rs2E),
-    .funct3E(funct3E)
+    .funct3E(funct3E),
+    .branch_takenE(branch_takenE)
     );
     
     // 3. Execute->Memory
@@ -303,7 +305,7 @@ module data_path(
     // Internal Units
     // ======================================================================
   
-    assign pc_srcE = jumpE || branch_taken;
+    assign pc_srcE = jumpE || branch_takenE;
     assign pc_targetE = (jalrE) ? (src_AE + imm_extE):(pcE + imm_extE);
     assign src_AE =     (forward_AE == 2'b00)? rd1E:
                         (forward_AE == 2'b01)? write_back_data:
