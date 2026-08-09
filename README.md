@@ -3,7 +3,7 @@
 **5-stage pipelined RISC-V (RV32I) core in Verilog implementing data forwarding, stalling, and flushing, validated on the Zynq-7000 ZedBoard.**
 
 ## 📌 Introduction
-This repository contains the RTL implementation of a 32-bit RISC-V processor designed from scratch. The core implements the standard **RV32I Instruction Set** and features a classic 5-stage pipeline (Fetch, Decode, Execute, Memory, Writeback). 
+This repository contains the RTL implementation of a 32-bit RISC-V processor designed from scratch. The core implements the standard **RV32I Instruction Set** and features a classic 5-stage pipelined architecture with hazard handling.
 
 Key architectural features include a **Hazard Detection Unit** for stalling and a **Forwarding Unit** to solve data hazards without unnecessary bubbles, ensuring high throughput. The design has been synthesized and validated on the **Digilent ZedBoard (Zynq-7000)**.
 
@@ -34,7 +34,7 @@ The processor uses a Harvard Architecture with separate Instruction and Data mem
 The core was verified by running an **Infinite Fibonacci Sequence** program.
 
 ### **Waveform Output**
-![Simulation Waveform](simulation_image/riscv-pipelined-core/simulation_image/Screenshot 2026-01-29 052156.png)
+![Simulation Waveform](simulation_image/Screenshot%202026-01-29%20052156.png)
 
 ### **Test Program (Fibonacci)**
 The processor executes the following assembly code to generate the sequence `0, 1, 1, 2, 3, 5, 8...` on the LEDs:
