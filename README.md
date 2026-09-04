@@ -113,4 +113,3 @@ Requires: [xPack RISC-V GCC](https://github.com/xpack-dev-tools/riscv-none-elf-g
 ## 📜 License
 
 MIT License
-```
