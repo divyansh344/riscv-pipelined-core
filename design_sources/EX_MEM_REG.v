@@ -31,6 +31,7 @@ module EX_MEM_REG(
     input wire [31:0] write_dataE,
     input wire [4:0] rdE,
     input wire [31:0] pc_plus_4E,
+    input wire [2:0] funct3E,
     
     output reg reg_writeM,
     output reg [1:0] result_srcM,
@@ -38,7 +39,8 @@ module EX_MEM_REG(
     output reg [31:0] alu_resultM,
     output reg [31:0] write_dataM,
     output reg [4:0] rdM,
-    output reg [31:0] pc_plus_4M
+    output reg [31:0] pc_plus_4M,
+    output reg [2:0] funct3M
     );
     
     always @(posedge clk) begin
@@ -48,8 +50,9 @@ module EX_MEM_REG(
             mem_writeM <= 0;
             alu_resultM <= 0;
             write_dataM <= 0;
-            rdM <= 0;
-            pc_plus_4M <= 0;
+            rdM         <= 0;
+            pc_plus_4M  <= 0;
+            funct3M     <= 0;
         end
         else begin
             reg_writeM <= reg_writeE;
@@ -57,8 +60,9 @@ module EX_MEM_REG(
             mem_writeM <= mem_writeE;
             alu_resultM <= alu_result;
             write_dataM <= write_dataE;
-            rdM <= rdE;
-            pc_plus_4M <= pc_plus_4E;
+            rdM         <= rdE;
+            pc_plus_4M  <= pc_plus_4E;
+            funct3M     <= funct3E;
         end
     end
 endmodule

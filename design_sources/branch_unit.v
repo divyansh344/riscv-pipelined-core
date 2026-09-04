@@ -40,14 +40,18 @@ module branch_unit(
                 // BNE (Branch if Not Equal)
                 3'b001: branch_taken = (src_a != src_b);
 
-                // BLT (Branch Less Than)
+                // BLT (Branch Less Than - Signed)
                 3'b100: branch_taken = ($signed(src_a) < $signed(src_b));
 
-                // BGE (Branch Greater/Equal)
+                // BGE (Branch Greater/Equal - Signed)
                 3'b101: branch_taken = ($signed(src_a) >= $signed(src_b));
 
-                // BLTU/BGEU (Unsigned) would need a Carry Flag, 
-                // but for this version, we default to 0.
+                // BLTU (Branch Less Than - Unsigned)
+                3'b110: branch_taken = (src_a < src_b);
+
+                // BGEU (Branch Greater/Equal - Unsigned)
+                3'b111: branch_taken = (src_a >= src_b);
+
                 default: branch_taken = 0;
             endcase
         end

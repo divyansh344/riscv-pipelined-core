@@ -37,7 +37,8 @@ module control_unit(
     output reg reg_write,       // Write Enable for Register File (1 for R-Type, I-Type, Loads)
     output reg branch,          // 1 if this is a Conditional Branch (BEQ, BNE, etc.)
     output reg jump,
-    output reg jalr
+    output reg jalr,
+    output reg auipc            // 1 for AUIPC: routes PC as ALU src_A instead of register
     );
     
     // ----------------------------------------------------------------------
@@ -70,11 +71,13 @@ module control_unit(
         branch = 0;
         jump = 0;
         jalr = 0;
+        auipc = 0;
                 
         if(rst) begin
             alu_control = ALU_NOP;
             reg_write   = 0;
             mem_write   = 0;
+            auipc       = 0;
         end
         
         else begin 
@@ -174,6 +177,17 @@ module control_unit(
                 reg_write = 1;
                 alu_src = 1;
                 alu_control = ALU_COPY_B; // Pass Immediate  
+            end
+            
+            // ---------------------------------------------
+            // AUIPC (Add Upper Immediate to PC)
+            // Opcode: 0010111
+            // ---------------------------------------------
+            else if(opcode == 7'b001_0111) begin
+                reg_write   = 1;
+                alu_src     = 1;       // Use immediate as src_B
+                alu_control = ALU_ADD; // ALU computes PC + imm
+                auipc       = 1;       // Signal datapath to use PC as src_A
             end 
             
             // ---------------------------------------------
@@ -198,7 +212,30 @@ module control_unit(
                 result_src = 2'b10;
                 alu_src = 1; // Add Immediate to Register
                 alu_control = ALU_ADD; // ALU ADD
-            end                                          
+            end
+
+            // ---------------------------------------------
+            // FENCE (opcode 0001111) — treated as NOP
+            // In this in-order pipeline, ordering is already
+            // guaranteed, so FENCE is a safe no-op.
+            // All control signals remain at default (0).
+            // ---------------------------------------------
+            else if(opcode == 7'b000_1111) begin
+                // NOP: reg_write=0, mem_write=0, branch=0, jump=0
+                // alu_control=ALU_NOP (default 0)
+            end
+
+            // ---------------------------------------------
+            // ECALL / EBREAK (opcode 1110011) — treated as NOP
+            // funct3=000 for both; funct12 distinguishes them.
+            // In a bare-metal core without OS, both are safe NOPs.
+            // A future privilege unit can intercept these.
+            // All control signals remain at default (0).
+            // ---------------------------------------------
+            else if(opcode == 7'b111_0011) begin
+                // NOP: reg_write=0, mem_write=0, branch=0, jump=0
+            end
+
         end
     end
 endmodule

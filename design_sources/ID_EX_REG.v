@@ -43,6 +43,8 @@ module ID_EX_REG(
     input wire [4:0] rs1D,
     input wire [4:0] rs2D,
     input wire [2:0] funct3D,
+    input wire branch_takenD,
+    input wire auipcD,
     
     output reg [5:0] alu_controlE,
     output reg mem_writeE,       
@@ -60,7 +62,9 @@ module ID_EX_REG(
     output reg [31:0] rd2E,
     output reg [4:0] rs1E,
     output reg [4:0] rs2E,
-    output reg [2:0] funct3E
+    output reg [2:0] funct3E,
+    output reg branch_takenE,
+    output reg auipcE
     );
     
     always @(posedge clk) begin
@@ -81,7 +85,9 @@ module ID_EX_REG(
             rd2E <= 0; 
             rs1E <= 0;
             rs2E <= 0;
-            funct3E <= 0;  
+            funct3E 	  <= 0; 
+            branch_takenE <= 0;
+            auipcE        <= 0; 
         end
         else begin
             alu_controlE <= alu_controlD;
@@ -100,7 +106,9 @@ module ID_EX_REG(
             rd2E <= rd2;
             rs1E <= rs1D;
             rs2E <= rs2D;
-            funct3E <= funct3D;
+            funct3E       <= funct3D;
+            branch_takenE <= branch_takenD;
+            auipcE        <= auipcD;
         end
     end
 endmodule

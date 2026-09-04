@@ -49,8 +49,11 @@ module register_file(
     // ----------------------------------------------------------------------
     // 2. WRITE LOGIC (Synchronous)
     // ----------------------------------------------------------------------
-    // Writes only happen on the Falling Edge of the Clock.
-    always @(negedge clk) begin
+    // Writes happen on the Rising Edge of the Clock.
+    // Changed from negedge to posedge to eliminate half-period cross-domain
+    // timing paths at 100 MHz. WB→ID branch forwarding in datapath.v ensures
+    // that the one cycle where WB and ID share a register is handled correctly.
+    always @(posedge clk) begin
         if (rst) begin
             for (i = 0; i < 32; i = i + 1) begin
                 registers[i] <= 32'b0;
